@@ -41,6 +41,7 @@
 
       const result = await response.json();
       console.log("API result:", result);
+      alert(JSON.stringify(result));
       if (result.Files && result.Files.length > 0) {
         const downloadUrl = result.Files[0].Url;
         document.getElementById('status').innerHTML = '✅ Done! <a href="' + downloadUrl + '" target="_blank">Download Word File</a>';
