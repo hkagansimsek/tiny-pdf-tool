@@ -1,20 +1,52 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>PDF to Word Converter</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; margin-top: 100px; }
-        input[type="file"] { margin: 20px; }
-        .box { padding: 50px; border: 1px solid #ccc; border-radius: 10px; display: inline-block; }
-    </style>
+  <meta charset="UTF-8">
+  <title>PDF to Word Converter</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 100px; }
+    .box { padding: 40px; border: 1px solid #ccc; border-radius: 10px; display: inline-block; }
+  </style>
 </head>
 <body>
-    <div class="box">
-        <h1>PDF to Word Converter</h1>
-        <p>Select your PDF file below and we'll show a placeholder for conversion (demo).</p>
-        <input type="file" accept=".pdf" />
-        <p style="color: gray;">*This is a static placeholder for Netlify deployment*</p>
-    </div>
+  <div class="box">
+    <h1>PDF to Word Converter</h1>
+    <p>Select your PDF file below and convert to Word (DOCX).</p>
+    <input type="file" id="fileInput" accept=".pdf" />
+    <br><br>
+    <button onclick="convertFile()">Convert</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    async function convertFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) {
+        alert("Please select a PDF file.");
+        return;
+      }
+
+      document.getElementById('status').innerText = 'Converting...';
+
+      const formData = new FormData();
+      formData.append("File", file);
+
+      const response = await fetch("https://v2.convertapi.com/convert/pdf/to/docx", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer Bmhr4gBcagWBwRER2PGt2sQ2hC989Toj"
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+      if (result.Files && result.Files.length > 0) {
+        const downloadUrl = result.Files[0].Url;
+        document.getElementById('status').innerHTML = '✅ Done! <a href="' + downloadUrl + '" target="_blank">Download Word File</a>';
+      } else {
+        document.getElementById('status').innerText = '❌ Conversion failed.';
+      }
+    }
+  </script>
 </body>
 </html>
