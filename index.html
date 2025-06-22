@@ -41,13 +41,24 @@
 
       const result = await response.json();
       console.log("API result:", result);
-      alert(JSON.stringify(result));
-      if (result.Files && result.Files.length > 0) {
-        const downloadUrl = result.Files[0].Url;
-        document.getElementById('status').innerHTML = '✅ Done! <a href="' + downloadUrl + '" target="_blank">Download Word File</a>';
+
+      if (result.Files && result.Files.length > 0 && result.Files[0].FileData) {
+        const base64 = result.Files[0].FileData;
+        const blob = base64ToBlob(base64, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        const url = URL.createObjectURL(blob);
+        document.getElementById('status').innerHTML = '✅ Done! <a href="' + url + '" download="converted.docx">Download Word File</a>';
       } else {
         document.getElementById('status').innerText = '❌ Conversion failed.';
       }
+    }
+
+    function base64ToBlob(base64, mime) {
+      const byteCharacters = atob(base64);
+      const byteArrays = [];
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteArrays.push(byteCharacters.charCodeAt(i));
+      }
+      return new Blob([new Uint8Array(byteArrays)], { type: mime });
     }
   </script>
 </body>
